@@ -38,4 +38,66 @@ comment the fallowing
 Create User
 --------------------------------
 
+    5  cd /opt/tomcat/conf/
+    6  ls -larth
+    7  vi tomcat-users.xml
+	
+ <role rolename="manager-gui"/>
+ <role rolename="manager-script"/>
+ <role rolename="manager-jmx"/>
+ <role rolename="manager-status"/>
+ <user username="admin" password="admin" roles="manager-gui, manager-script, manager-jmx, manager-status"/>
+ <user username="deployer" password="deployer" roles="manager-script"/>
+ <user username="tomcat" password="s3cret" roles="manager-gui"/>
+	
+    8  cd ../bin/
+    9  ./shutdown.sh
+   10  ./startup.sh
+   11  history
+
+================================================================================================================================================
+
+--------------------------------
+Deploy On VM 
+--------------------------------
+
+
+Jenkins > Manage Jenkins > Manage Plugins > Available > Deploy to container
+
+Jenkins > New Item > Deploy_on_Tomcat_Server > Maven > OK
+
+
+Description - Deploy On VM > git - https://github.com/khalandarHS/hello-world.git > Build - pom.xml , clean install package > 
+
+Post Build Actions - Deploy war/ear to container > WAR - **/*.war > Container - Credentials > add - username - Deployer, Password Deployer , Tomcat_user , Description - User to deploy on Tomcat.
+
+Tomcat_URL 		http://52.55.64.3:8080
+
+Apply > Save.
+
+Build Now
+
+go check in tomcat server webapp must be copied there  in location "/opt/tomcat/webapps" From Jenkins Server location " /var/lib/jenkins/workspace/My_First_Maven_Build/webapp/target"
+
+
+================================================================================================================================================
+
+--------------------------------
+Deploy On VM using poll SCM
+--------------------------------
+
+Deploy to Tomcat Server job 
+
+Configure > Build Trigger > poll SCM - * * * * * 
+
+Apply > Save
+
+
+
+
+
+
+
+
+
 
