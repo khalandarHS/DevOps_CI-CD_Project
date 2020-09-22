@@ -1,0 +1,41 @@
+
+TOMCAT SETUP
+
+================================================================================================================================================
+
+https://github.com/khalandarHS/Simple-DevOps-Project/blob/master/Tomcat/tomcat_installation.MD
+
+================================================================================================================================================
+
+cd /opt
+
+
+wget http://apachemirror.wuchna.com/tomcat/tomcat-8/v8.5.58/bin/apache-tomcat-8.5.58.tar.gz
+tar -zxvf apache-tomcat-8.5.58.tar.gz
+mv apache-tomcat-8.5.58 tomcat
+cd tomcat/bin/
+./startup.sh
+
+Browser > http://52.55.64.3:8080/ 
+
+
+--------------------------------
+Edit context.xml
+--------------------------------
+
+find / -name context.xml
+
+vi /opt/tomcat/webapps/manager/META-INF/context.xml
+vi /opt/tomcat/webapps/host-manager/META-INF/context.xml
+
+comment the fallowing 
+
+<!--  <Valve className="org.apache.catalina.valves.RemoteAddrValve"
+         allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" /> -->
+
+
+--------------------------------
+Create User
+--------------------------------
+
+

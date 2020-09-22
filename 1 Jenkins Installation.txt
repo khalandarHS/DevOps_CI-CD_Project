@@ -1,0 +1,146 @@
+JENKINS INSTALLATION
+-------------------------------
+
+https://github.com/khalandarHS/Simple-DevOps-Project/blob/master/Jenkins/Jenkins_Installation.MD
+
+-------------------------------
+CREATE EC2 INSTANCE
+-------------------------------
+
+lAUNCH INSTANCE > amazon Linux > t2micro > configure > storage > add tags (Name: jenkins-server) > security Group (Custom TCP Rule - port : 8080) > Review and lAUNCH
+
+
+--------------------------------
+
+mobaxtrem
+
+--------------------------------
+ yum remove  java-1.7.0*			//to remove java-7
+ yum install java-1.8*				//to install java-8
+    3  java -version
+    4  find /usr/lib/jvm/java-1.8* | head -n 3				//to find java path
+    5  cd ~							
+    6  pwd
+    7  vi .bash_profile				// to  set java_home (give the path there)
+    8  echo $JAVA_HOME
+    9  sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo			//jenkins download > jenkins LTS - fedora/redhat/centos
+   10  sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key								// import key
+   11  yum install jenkins 				//install jenkins
+   12  service jenkins status
+   13  service jenkins start
+   14  service jenkins status
+------------------------------------
+   
+Browser
+
+------------------------------------
+
+http://54.167.93.252:8080/user/admin/
+
+cat /var/lib/jenkins/secrets/initialAdminPassword
+
+skip plugins > start using jenkins
+
+change password > goto admin > Configure > password > apply > save.
+
+Jenkins Java Home > Manage jenkins > global tool configure > add JDK > Name - JAVA_HOME , JAVA_HOME - /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.265.b01-0.54.amzn1.x86_64 > apply > save.
+
+------------------------------------
+New Job
+------------------------------------
+
+    Create “new item”
+    Enter an item name – My-First-Project
+        Chose Freestyle project
+    Under the Build section Execute shell: echo "Welcome to Jenkins Demo"
+    Save your job
+    Build job
+    Check "console output"
+
+
+
+
+================================================================================================================================================
+
+Configure Git pulgin on Jenkins
+
+================================================================================================================================================
+
+https://github.com/khalandarHS/Simple-DevOps-Project/blob/master/Jenkins/Git_plugin_install.MD
+
+
+    Install git packages on jenkins server
+
+    yum install git -y
+
+Setup Git on jenkins console
+
+    Install git plugin without restart
+        Manage Jenkins > Jenkins Plugins > available > github
+
+    Configure git path
+
+    Manage Jenkins > Global Tool Configuration > git				//keep default setting and apply and save.
+
+
+
+
+================================================================================================================================================
+
+Maven Setup
+
+================================================================================================================================================
+
+
+https://github.com/khalandarHS/Simple-DevOps-Project/blob/master/Jenkins/maven_install.MD
+
+
+
+
+ wget https://mirrors.estointernet.in/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz    //DOWNLOAD maven
+
+   27  tar -zxvf apache-maven-3.6.3-bin.tar.gz		//extracct
+   28  ls
+   29  mv apache-maven-3.6.3 maven
+   30  cd maven/
+   37  cd ~
+   38  vi .bash_profile 							//	M2_HOME=/opt/maven
+														M2=/opt/maven/bin
+														PATH=$PATH:$HOME/bin:$JAVA_HOME:$M2:$M2_HOME
+
+   39  echo M2
+   40  echo $M2
+   41  echo $M2_HOME
+   51  vi .bash_profile
+   52  mvn --version
+
+
+
+Setup maven on Jenkins console
+
+    Install maven plugin without restart
+
+    Manage Jenkins > Jenkins Plugins > available > Maven Invoker
+    Manage Jenkins > Jenkins Plugins > available > Maven Integration
+
+    Configure maven path
+
+    Manage Jenkins > Global Tool Configuration > Maven 							// M2_HOME=/opt/maven
+
+================================================================================================================================================
+
+New Job in Jenkins
+
+================================================================================================================================================
+
+New Item > My-First-maven- build > maven project > OK
+
+General > Description - First Maven Build > Source Code Management : Git - https://github.com/khalandarHS/hello-world.git , Branch - */master > Build - pom.xml , Goals - clean install package   >  Apply > Save
+
+
+Build Job
+
+webapp.war
+
+/var/lib/jenkins/workspace/My_First_Maven_Build/webapp/target
+
