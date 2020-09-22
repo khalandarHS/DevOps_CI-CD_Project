@@ -1,0 +1,158 @@
+Docker SETUP
+
+================================================================================================================================================
+
+https://github.com/khalandarHS/Simple-DevOps-Project/blob/master/Docker/Docker_Installation_Steps.MD
+
+================================================================================================================================================
+
+
+Launch Amazon Linux instance
+
+	1	hostname docker-host
+    2  hostname
+    3  yum install docker -y
+    4  docker ps
+    5  service docker status
+    6  service docker staart
+    7  service docker start
+    8  service docker status
+    9  docker ps
+	   docker image
+   12  docker image ls
+   13  docker pull tomcat:8.5.43
+docker run --name tomcat-container -p 8080:8080 tomcat:8.5.43
+docker run -d --name tomcat-container -p 8080:8080 tomcat:8.5.43
+docker ps
+
+check in URL : http://100.25.117.208:8080/
+
+----------------------------------------------------------------
+Integrate docker with jenkins
+----------------------------------------------------------------
+
+Jenkins > Manage Jenkins > Manage Plugin > available > publish over SSH
+
+Add docker credentials in jenkins so we create user in docker-host
+
+	   useradd dockeradmin
+   32  passwd dockeradmin
+   33  cat /etc/group
+   34  usermod -aG docker dockeradmin
+   35  id
+   36  id dockeradmin
+   37  cat /etc/group
+
+
+Jenkins > Manage Jenkins > configure system > Publish Over SSH  > SSH Server > 
+
+Name 		- docker-host
+Hostname 	- 172.31.53.162
+Username 	- dockeradmin   	>	advance > use password authentication 
+
+Test configure  // it fails cuz we need to enable password based authentication on server
+
+Docker-host > vi /etc/ssh/sshd_config
+
+PasswordAuthentication no   // change it to "yes"
+
+service sshd reload
+
+Jenkins Console > Test Configure > Success
+
+
+
+----------------------------------------------------------------
+Jenkins job to copy artifacts on to docker-host
+----------------------------------------------------------------
+
+Jenkins > New Item > Deploy on Docker > Copy from - deploy on tomcat- server > OK
+
+Description - Deploy On Docker
+
+Git - same
+ 
+Build Trigger - remove PollSCM
+
+Post - Build - Actions -> remove old > 
+
+select Name -  Docker-host
+Source File - webapp/target/*.war
+Remote Directory - .          // normally the artifact copies to docker-host home directory "/home/dockeradmin"
+
+Build the jenkins - Deploy on Docker job
+
+success - 
+
+check webapp.war file in docker-host home directory "/home/dockeradmin/webapp/target"
+
+----------------------------------------------------------------
+
+if you want to remove the copy path of /webapp/target in docker-host
+
+jenkins > Deploy on Docker job > configure > Post-build Actions = remove prefix -  webapp/target
+
+
+--------------------------------------------------------------------------------------------------------------------------------
+Create a dockerfile which copies weebapp.war from /home/dockeradmin to docker container
+--------------------------------------------------------------------------------------------------------------------------------
+
+
+pwd
+/home/dockeradmin
+vi Dockerfile
+
+FROM tomcat:8.5.43
+MAINTAINER dadu
+COPY ./webapp.war /usr/local/tomcat/webapps
+
+:wq!
+
+
+docker build -t devops-project:8.5.43 .				 //build new devops-project:8.5.43 image with the Dockerfile from tomcat:8.5.43
+
+docker run --name devops-container -p 8080:8080 devops-project:8.5.43 
+
+check in browser 
+http://100.25.117.208:8080/
+http://100.25.117.208:8080/webapp/
+
+
+--------------------------------------------------------------------------------------------------------------------------------
+Deploy a war file on Docker container Using Jenkins
+--------------------------------------------------------------------------------------------------------------------------------
+
+Jenkins > New item > Deploy_on_Container > copy  - Deploy_on_Docker > OK
+
+Description - Deploy On  Container
+
+Git - same
+
+Build - same
+
+Post-build- Actions 
+
+all - same
+
+EXEC Commands - cd /home/dockeradmin; docker build -t devops-image:8.5.43 .; docker run -d --name devops-container -p 8080:8080 devops-image:8.5.43
+
+apply > save
+
+check by running the build Now 		// remove any continers/images and weebapp.war file if exists
+
+After build check for new war file in /home/dockeradmin and docker images and docker container, 
+also check by running URL
+
+http://100.25.117.208:8080
+http://100.25.117.208:8080/webapp/
+
+
+
+
+
+
+
+
+
+
+
